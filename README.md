@@ -1,6 +1,6 @@
 # IAM Policy Generation and Security Compliance via Large Language Models in AWS Cloud Security Environments
 
-This is a repo dedicated to the hosting of the artifacts, code and other resources related to the implementation aspect of our course CSE-543 taught by Dr. Stephen Yau.
+This is a repo dedicated to the hosting of the artifacts, code and other resources related to the implementation aspect of our course CSE-543 taught by Dr. Stephen Yau. Please keep in mind this project requires some API and credential keys, so pre-requisite setup is required from your end. Refer to 'How to run' for more info.
 
 ## Repo Structure
 ```
@@ -12,7 +12,7 @@ llm_iam_policy_generation_cse543/
 ├── docs/
 │   ├── Report.pdf      ← will be added once ready (later this month as per Gantt Chart)
 │
-└── README.md                         ← main project documentation
+└── README.md           ← main project documentation
 ```
 
 ## IAM Policy Generation & Validation Pipeline (n8n)
