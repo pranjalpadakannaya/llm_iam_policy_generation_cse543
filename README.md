@@ -30,7 +30,9 @@ This n8n workflow automates the generation, validation, and evaluation of AWS IA
 
 1) Log in and create an account on n8n.io
 2) Create a new workflow
-3) Import workflow and select the json present in this repo
+3) Import workflow and select the json present in this repo (iam-policy-evaluator.json)
+4) Create a lambda function on AWS with HTTP endpoint enabled and paste the contents of lambda_function.py
+5) In iam-policy-evaluator.json, modify credentials, API keys and HTTP endpoints to your specific values. (Currently it is only set to our values and you might need specific permissions to replicate it on your system)
 
 ### Methodology
 
