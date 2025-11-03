@@ -9,6 +9,9 @@ llm_iam_policy_generation_cse543/
 ├── workflows/
 │   └── iam-policy-evaluator.json         
 │
+│── scripts/
+│   └── lambda_function.py
+│ 
 ├── docs/
 │   ├── Report.pdf      ← will be added once ready (later this month as per Gantt Chart)
 │
