@@ -6,290 +6,11 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        656,
-        1552
+        736,
+        992
       ],
       "id": "03b8c129-db51-4cbd-8518-cc574cfcce7f",
       "name": "When clicking ‘Execute workflow’"
-    },
-    {
-      "parameters": {
-        "documentId": {
-          "__rl": true,
-          "value": "14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg",
-          "mode": "id"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 527641204,
-          "mode": "list",
-          "cachedResultName": "Copy of Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit#gid=527641204"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        1136,
-        1312
-      ],
-      "id": "9459a32f-7ea2-4499-8902-2eaff4b2ba62",
-      "name": "Get row(s) in sheet2",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "jaEC5sQyAFQxY98U",
-          "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.Prompt }}",
-        "hasOutputParser": true,
-        "options": {
-          "systemMessage": "You are an expert in AWS Identity and Access Management (IAM) and must generate valid AWS IAM policies in JSON format that strictly follow least privilege principles.\n\n### General Rules:\n1. The model output must be a JSON object only — no text, no comments, no explanations.\n2. Do exactly what the user prompt asks — nothing more, nothing less.\n3. Always apply AWS least-privilege best practices — include only the minimal actions, resources, and conditions required.\n4. Use **correct ARN resource patterns** (e.g., \"arn:aws:s3:::*/*\" for all S3 objects). Use `\"*\"` only when:\n   - The service does **not** support resource-level permissions, or\n   - The user explicitly specifies `\"*\"` as the resource.\n5. Interpret the user prompt **literally**:\n   - “write access” → only include actions like `s3:PutObject`\n   - “read access” → only include minimal read actions like `s3:GetObject`\n   - Do **not** assume additional permissions unless explicitly stated.\n6. If the user provides `Condition`, `Principal`, or multiple statements, preserve them **exactly** as given — do not alter key names, capitalization, or nesting.\n7. Always include `\"Version\": \"2012-10-17\"` unless the user specifies another.\n8. When `Condition` is specified, preserve all nested operators (e.g., `DateGreaterThan`, `StringEquals`, `IpAddress`, etc.) exactly as written.\n9. Return the JSON object in this structure **exactly** (do not include type metadata or schema text):\n\n\nSTRICTLY FOLLOW THIS OUTPUT FORMAT\n{\n    \"output\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"policy\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"Version\": {\n              \"type\": \"string\",\n              \"description\": \"The policy language version, usually '2012-10-17'.\",\n              \"enum\": [\"2012-10-17\", \"2008-10-17\"]\n            },\n            \"Id\": {\n              \"type\": \"string\",\n              \"description\": \"Optional identifier for the policy.\"\n            },\n            \"Statement\": {\n              \"type\": [\"array\", \"object\"],\n              \"description\": \"One or more statements defining the policy rules.\",\n              \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"Sid\": {\n                    \"type\": \"string\",\n                    \"description\": \"Optional statement identifier.\"\n                  },\n                  \"Effect\": {\n                    \"type\": \"string\",\n                    \"enum\": [\"Allow\", \"Deny\"],\n                    \"description\": \"Allow or Deny effect.\"\n                  },\n                  \"Principal\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"object\" }\n                    ],\n                    \"description\": \"Defines the principal to which this statement applies.\"\n                  },\n                  \"Action\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS actions affected by this statement.\"\n                  },\n                  \"NotAction\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Actions explicitly excluded.\"\n                  },\n                  \"Resource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS resources affected by this statement.\"\n                  },\n                  \"NotResource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Resources explicitly excluded.\"\n                  },\n                  \"Condition\": {\n                    \"type\": \"object\",\n                    \"description\": \"Optional conditions for this statement.\",\n                    \"additionalProperties\": {\n                      \"type\": \"object\",\n                      \"additionalProperties\": {\n                        \"oneOf\": [\n                          { \"type\": \"string\" },\n                          { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                        ]\n                      }\n                    }\n                  }\n                },\n                \"required\": [\"Effect\", \"Action\", \"Resource\"],\n                \"additionalProperties\": false\n              }\n            }\n          },\n          \"required\": [\"Version\", \"Statement\"],\n          \"additionalProperties\": false\n        },\n        \"resourceArns\": {\n          \"type\": \"array\",\n          \"items\": { \"type\": \"string\" },\n          \"description\": \"List of AWS Resource ARNs the policy applies to.\"\n        }\n      },\n      \"required\": [\"policy\", \"resourceArns\"],\n      \"additionalProperties\": false\n    },\n  \"required\": [\"output\"],\n  \"additionalProperties\": false\n}\n\n\n### Service-Specific Rules:\n10. For services that **do not support resource-level permissions** (always require `\"Resource\": \"*\"`) such as:\n    - `account`\n    - `organizations`\n    - `support`\n    - `billing`\n    - `cloudfront-tagging`\n    - `trustedadvisor`\n    - `budgets`\n    - `securityhub`\n    always use `\"Resource\": \"*\"` and express scope or restriction using a `Condition` key (e.g., `\"account:TargetRegion\"`, `\"organizations:AccountId\"`, etc.).\n11. If a user specifies an invalid ARN for such services, automatically correct it to `\"Resource\": \"*\"` and move the restriction into a `Condition` if context implies one.\n12. For resource-based services like S3, DynamoDB, Lambda, SQS, and SNS:\n    - Use explicit ARNs when possible (never `\"*\"` unless absolutely required).\n    - Follow valid ARN patterns per service documentation.\n13. Every `Statement` should represent a single, coherent permission scope (actions + resources + conditions).  \n    If multiple SIDs are present, each represents an independent statement block.\n14. Always maintain valid IAM syntax: `\"Effect\"`, `\"Action\"`, and `\"Resource\"` are mandatory fields."
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2.2,
-      "position": [
-        1520,
-        1312
-      ],
-      "id": "a9e977b0-1f30-41d4-8462-fcf0e40c67b5",
-      "name": "AI Agent2",
-      "retryOnFail": true,
-      "maxTries": 2
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "gpt-4.1",
-          "mode": "list",
-          "cachedResultName": "gpt-4.1"
-        },
-        "options": {
-          "responseFormat": "json_object"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        1408,
-        1520
-      ],
-      "id": "c29656cb-6b1b-4fb0-9377-f50ad1539ced",
-      "name": "OpenAI Chat Model2",
-      "credentials": {
-        "openAiApi": {
-          "id": "oz6ZH8OCI5G2ljSs",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://vc5la5rs55.execute-api.us-east-1.amazonaws.com/default/test_lambda",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {}
-          ]
-        },
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "policy",
-              "value": "={{ $json.output.policy }}"
-            },
-            {
-              "name": "resourceArns",
-              "value": "={{ $json.output.resourceArns }}"
-            },
-            {
-              "name": "actionNames",
-              "value": "={{ JSON.parse($('Get row(s) in sheet2').item.json['Expected Actions']) }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1968,
-        1312
-      ],
-      "id": "14f14303-4e4b-42d9-939c-26c3429f296e",
-      "name": "HTTP Request2"
-    },
-    {
-      "parameters": {
-        "schemaType": "manual",
-        "inputSchema": "{  \n  \"output\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"policy\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"Version\": {\n              \"type\": \"string\",\n              \"description\": \"The policy language version, usually '2012-10-17'.\",\n              \"enum\": [\"2012-10-17\", \"2008-10-17\"]\n            },\n            \"Id\": {\n              \"type\": \"string\",\n              \"description\": \"Optional identifier for the policy.\"\n            },\n            \"Statement\": {\n              \"type\": [\"array\", \"object\"],\n              \"description\": \"One or more statements defining the policy rules.\",\n              \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"Sid\": {\n                    \"type\": \"string\",\n                    \"description\": \"Optional statement identifier.\"\n                  },\n                  \"Effect\": {\n                    \"type\": \"string\",\n                    \"enum\": [\"Allow\", \"Deny\"],\n                    \"description\": \"Allow or Deny effect.\"\n                  },\n                  \"Principal\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"object\" }\n                    ],\n                    \"description\": \"Defines the principal to which this statement applies.\"\n                  },\n                  \"Action\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS actions affected by this statement.\"\n                  },\n                  \"NotAction\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Actions explicitly excluded.\"\n                  },\n                  \"Resource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS resources affected by this statement.\"\n                  },\n                  \"NotResource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Resources explicitly excluded.\"\n                  },\n                  \"Condition\": {\n                    \"type\": \"object\",\n                    \"description\": \"Optional conditions for this statement.\",\n                    \"additionalProperties\": {\n                      \"type\": \"object\",\n                      \"additionalProperties\": {\n                        \"oneOf\": [\n                          { \"type\": \"string\" },\n                          { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                        ]\n                      }\n                    }\n                  }\n                },\n                \"required\": [\"Effect\", \"Action\", \"Resource\"],\n                \"additionalProperties\": false\n              }\n            }\n          },\n          \"required\": [\"Version\", \"Statement\"],\n          \"additionalProperties\": false\n        },\n        \"resourceArns\": {\n          \"type\": \"array\",\n          \"items\": { \"type\": \"string\" },\n          \"description\": \"List of AWS Resource ARNs the policy applies to.\"\n        }\n      },\n      \"required\": [\"policy\", \"resourceArns\"],\n      \"additionalProperties\": false\n    },\n  \"required\": [\"output\"],\n  \"additionalProperties\": false\n}\n"
-      },
-      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-      "typeVersion": 1.3,
-      "position": [
-        1744,
-        1520
-      ],
-      "id": "b7935fdc-c461-4387-9e73-54efd6de7db1",
-      "name": "Structured Output Parser2"
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "documentId": {
-          "__rl": true,
-          "value": "14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg",
-          "mode": "list",
-          "cachedResultName": "INPUT DATA IAS",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 527641204,
-          "mode": "list",
-          "cachedResultName": "Copy of Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit#gid=527641204"
-        },
-        "columns": {
-          "mappingMode": "autoMapInputData",
-          "value": {},
-          "matchingColumns": [
-            "row_number"
-          ],
-          "schema": [
-            {
-              "id": "Prompt",
-              "displayName": "Prompt",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Expected Actions",
-              "displayName": "Expected Actions",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "LLM Result",
-              "displayName": "LLM Result",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "row_number",
-              "displayName": "row_number",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "canBeUsedToMatch": true,
-              "readOnly": true,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        2496,
-        1312
-      ],
-      "id": "7cd82e6e-1a8a-4a3e-8b11-0578be287432",
-      "name": "Update row in sheet1",
-      "alwaysOutputData": true,
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "jaEC5sQyAFQxY98U",
-          "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "6c461047-15c5-492d-8487-e5c1ec2c6957",
-              "name": "row_number",
-              "value": "={{ $('Get row(s) in sheet2').item.json.row_number }}",
-              "type": "string"
-            },
-            {
-              "id": "db5700d2-dd69-434a-a510-4082961383e1",
-              "name": "Prompt",
-              "value": "={{ $('Get row(s) in sheet2').item.json.Prompt }}",
-              "type": "string"
-            },
-            {
-              "id": "084e0846-a57d-4233-b91c-00da8a5d41d2",
-              "name": "Expected Actions",
-              "value": "={{ JSON.parse($('Get row(s) in sheet2').item.json['Expected Actions']) }}",
-              "type": "array"
-            },
-            {
-              "id": "8c13d3ab-c1cb-4b0e-aff6-bc3bb1b81eed",
-              "name": "OPENAI",
-              "value": "={{ $json.EvaluationResults.map(r => `${r.EvalActionName}: ${r.EvalDecision}`).join(', ') }}\n",
-              "type": "string"
-            },
-            {
-              "id": "edd1fa8e-b8e5-4d6c-b38d-40a67e321823",
-              "name": "OPENAI policy",
-              "value": "={{ $('AI Agent2').item.json.output }}",
-              "type": "object"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        2272,
-        1312
-      ],
-      "id": "df24f589-d7d3-49a7-bb83-82d2b216d7ba",
-      "name": "Edit Fields1"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.Prompt }}",
-        "hasOutputParser": true,
-        "options": {
-          "systemMessage": "You are an expert in AWS Identity and Access Management (IAM) and must generate valid AWS IAM policies in JSON format that strictly follow least privilege principles.\n\n### General Rules:\n1. The model output must be a JSON object only — no text, no comments, no explanations.\n2. Do exactly what the user prompt asks — nothing more, nothing less.\n3. Always apply AWS least-privilege best practices — include only the minimal actions, resources, and conditions required.\n4. Use **correct ARN resource patterns** (e.g., \"arn:aws:s3:::*/*\" for all S3 objects). Use `\"*\"` only when:\n   - The service does **not** support resource-level permissions, or\n   - The user explicitly specifies `\"*\"` as the resource.\n5. Interpret the user prompt **literally**:\n   - “write access” → only include actions like `s3:PutObject`\n   - “read access” → only include minimal read actions like `s3:GetObject`\n   - Do **not** assume additional permissions unless explicitly stated.\n6. If the user provides `Condition`, `Principal`, or multiple statements, preserve them **exactly** as given — do not alter key names, capitalization, or nesting.\n7. Always include `\"Version\": \"2012-10-17\"` unless the user specifies another.\n8. When `Condition` is specified, preserve all nested operators (e.g., `DateGreaterThan`, `StringEquals`, `IpAddress`, etc.) exactly as written.\n9. Return the JSON object in this structure **exactly** (do not include type metadata or schema text):\n\n\nSTRICTLY FOLLOW THIS OUTPUT FORMAT\n{\n    \"output\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"policy\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"Version\": {\n              \"type\": \"string\",\n              \"description\": \"The policy language version, usually '2012-10-17'.\",\n              \"enum\": [\"2012-10-17\", \"2008-10-17\"]\n            },\n            \"Id\": {\n              \"type\": \"string\",\n              \"description\": \"Optional identifier for the policy.\"\n            },\n            \"Statement\": {\n              \"type\": [\"array\", \"object\"],\n              \"description\": \"One or more statements defining the policy rules.\",\n              \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"Sid\": {\n                    \"type\": \"string\",\n                    \"description\": \"Optional statement identifier.\"\n                  },\n                  \"Effect\": {\n                    \"type\": \"string\",\n                    \"enum\": [\"Allow\", \"Deny\"],\n                    \"description\": \"Allow or Deny effect.\"\n                  },\n                  \"Principal\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"object\" }\n                    ],\n                    \"description\": \"Defines the principal to which this statement applies.\"\n                  },\n                  \"Action\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS actions affected by this statement.\"\n                  },\n                  \"NotAction\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Actions explicitly excluded.\"\n                  },\n                  \"Resource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS resources affected by this statement.\"\n                  },\n                  \"NotResource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Resources explicitly excluded.\"\n                  },\n                  \"Condition\": {\n                    \"type\": \"object\",\n                    \"description\": \"Optional conditions for this statement.\",\n                    \"additionalProperties\": {\n                      \"type\": \"object\",\n                      \"additionalProperties\": {\n                        \"oneOf\": [\n                          { \"type\": \"string\" },\n                          { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                        ]\n                      }\n                    }\n                  }\n                },\n                \"required\": [\"Effect\", \"Action\", \"Resource\"],\n                \"additionalProperties\": false\n              }\n            }\n          },\n          \"required\": [\"Version\", \"Statement\"],\n          \"additionalProperties\": false\n        },\n        \"resourceArns\": {\n          \"type\": \"array\",\n          \"items\": { \"type\": \"string\" },\n          \"description\": \"List of AWS Resource ARNs the policy applies to.\"\n        }\n      },\n      \"required\": [\"policy\", \"resourceArns\"],\n      \"additionalProperties\": false\n    },\n  \"required\": [\"output\"],\n  \"additionalProperties\": false\n}\n\n\n### Service-Specific Rules:\n10. For services that **do not support resource-level permissions** (always require `\"Resource\": \"*\"`) such as:\n    - `account`\n    - `organizations`\n    - `support`\n    - `billing`\n    - `cloudfront-tagging`\n    - `trustedadvisor`\n    - `budgets`\n    - `securityhub`\n    always use `\"Resource\": \"*\"` and express scope or restriction using a `Condition` key (e.g., `\"account:TargetRegion\"`, `\"organizations:AccountId\"`, etc.).\n11. If a user specifies an invalid ARN for such services, automatically correct it to `\"Resource\": \"*\"` and move the restriction into a `Condition` if context implies one.\n12. For resource-based services like S3, DynamoDB, Lambda, SQS, and SNS:\n    - Use explicit ARNs when possible (never `\"*\"` unless absolutely required).\n    - Follow valid ARN patterns per service documentation.\n13. Every `Statement` should represent a single, coherent permission scope (actions + resources + conditions).  \n    If multiple SIDs are present, each represents an independent statement block.\n14. Always maintain valid IAM syntax: `\"Effect\"`, `\"Action\"`, and `\"Resource\"` are mandatory fields."
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2.2,
-      "position": [
-        1536,
-        1728
-      ],
-      "id": "10d90a9e-dafe-42de-a60e-46dfb780ac56",
-      "name": "AI Agent3"
     },
     {
       "parameters": {
@@ -298,8 +19,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        1408,
-        1920
+        1760,
+        1520
       ],
       "id": "9a5aac70-3048-44f1-bc89-9d577996e9dc",
       "name": "Google Gemini Chat Model",
@@ -318,8 +39,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        1776,
-        1920
+        2128,
+        1520
       ],
       "id": "ecc32301-b5b1-4a07-9a4e-5f8133828199",
       "name": "Structured Output Parser3"
@@ -343,8 +64,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1136,
-        1728
+        1056,
+        1296
       ],
       "id": "5569dd3c-66a4-4f3a-a53f-438fec5fa7e0",
       "name": "Get row(s) in sheet3",
@@ -354,44 +75,6 @@
           "name": "Google Sheets account"
         }
       }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://vc5la5rs55.execute-api.us-east-1.amazonaws.com/default/test_lambda",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {}
-          ]
-        },
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "policy",
-              "value": "={{ $json.output.policy }}"
-            },
-            {
-              "name": "resourceArns",
-              "value": "={{ $json.output.resourceArns }}"
-            },
-            {
-              "name": "actionNames",
-              "value": "={{ JSON.parse($('Get row(s) in sheet3').item.json['Expected Actions']) }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1984,
-        1728
-      ],
-      "id": "e3c0f940-2ec1-47f3-8a34-85a304552f09",
-      "name": "HTTP Request3"
     },
     {
       "parameters": {
@@ -464,8 +147,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2512,
-        1728
+        3072,
+        1280
       ],
       "id": "68b8d3d9-423f-49c2-8088-289caa3047f2",
       "name": "Update row in sheet2",
@@ -502,13 +185,19 @@
             {
               "id": "6168dbf9-bb12-45d0-a02c-34b250d77caf",
               "name": "GEMINI policy",
-              "value": "={{ $('AI Agent3').item.json.output }}",
+              "value": "={{ $('Google AI Agent').item.json.output }}",
               "type": "object"
             },
             {
               "id": "8c13d3ab-c1cb-4b0e-aff6-bc3bb1b81eed",
               "name": "GEMINI",
-              "value": "={{ $json.EvaluationResults.map(r => `${r.EvalActionName}: ${r.EvalDecision}`).join(', ') }}\n",
+              "value": "={{ $('IAM Policy Simulator1').item.json.EvaluationResults.map(r => `${r.EvalActionName}: ${r.EvalDecision}`).join(', ') }}\n",
+              "type": "string"
+            },
+            {
+              "id": "21c7e34c-bf2b-47f4-8ee1-898756b2e897",
+              "name": "GEMINI Result",
+              "value": "={{ $json.classification }}",
               "type": "string"
             }
           ]
@@ -518,11 +207,1038 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2288,
-        1728
+        2864,
+        1280
       ],
       "id": "38fdd69c-d9da-41bb-bca7-a9da65604433",
       "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 527641204,
+          "mode": "list",
+          "cachedResultName": "Copy of Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit#gid=527641204"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        2576
+      ],
+      "id": "c83b618e-a3b4-46c3-9798-d8a5a95a0f56",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jaEC5sQyAFQxY98U",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{  \n  \"output\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"policy\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"Version\": {\n              \"type\": \"string\",\n              \"description\": \"The policy language version, usually '2012-10-17'.\",\n              \"enum\": [\"2012-10-17\", \"2008-10-17\"]\n            },\n            \"Id\": {\n              \"type\": \"string\",\n              \"description\": \"Optional identifier for the policy.\"\n            },\n            \"Statement\": {\n              \"type\": [\"array\", \"object\"],\n              \"description\": \"One or more statements defining the policy rules.\",\n              \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"Sid\": {\n                    \"type\": \"string\",\n                    \"description\": \"Optional statement identifier.\"\n                  },\n                  \"Effect\": {\n                    \"type\": \"string\",\n                    \"enum\": [\"Allow\", \"Deny\"],\n                    \"description\": \"Allow or Deny effect.\"\n                  },\n                  \"Principal\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"object\" }\n                    ],\n                    \"description\": \"Defines the principal to which this statement applies.\"\n                  },\n                  \"Action\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS actions affected by this statement.\"\n                  },\n                  \"NotAction\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Actions explicitly excluded.\"\n                  },\n                  \"Resource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS resources affected by this statement.\"\n                  },\n                  \"NotResource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Resources explicitly excluded.\"\n                  },\n                  \"Condition\": {\n                    \"type\": \"object\",\n                    \"description\": \"Optional conditions for this statement.\",\n                    \"additionalProperties\": {\n                      \"type\": \"object\",\n                      \"additionalProperties\": {\n                        \"oneOf\": [\n                          { \"type\": \"string\" },\n                          { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                        ]\n                      }\n                    }\n                  }\n                },\n                \"required\": [\"Effect\", \"Action\", \"Resource\"],\n                \"additionalProperties\": false\n              }\n            }\n          },\n          \"required\": [\"Version\", \"Statement\"],\n          \"additionalProperties\": false\n        },\n        \"resourceArns\": {\n          \"type\": \"array\",\n          \"items\": { \"type\": \"string\" },\n          \"description\": \"List of AWS Resource ARNs the policy applies to.\"\n        }\n      },\n      \"required\": [\"policy\", \"resourceArns\"],\n      \"additionalProperties\": false\n    },\n  \"required\": [\"output\"],\n  \"additionalProperties\": false\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1728,
+        2784
+      ],
+      "id": "ae804d38-1b44-427a-a7a1-6316d9c3fe39",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg",
+          "mode": "list",
+          "cachedResultName": "INPUT DATA IAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 527641204,
+          "mode": "list",
+          "cachedResultName": "Copy of Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit#gid=527641204"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Prompt",
+              "displayName": "Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expected Actions",
+              "displayName": "Expected Actions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LLM Result",
+              "displayName": "LLM Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2720,
+        2576
+      ],
+      "id": "a55a230e-da36-4718-9175-f5cb969bf17c",
+      "name": "Update row in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jaEC5sQyAFQxY98U",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6c461047-15c5-492d-8487-e5c1ec2c6957",
+              "name": "row_number",
+              "value": "={{ $('Get row(s) in sheet').item.json.row_number }}",
+              "type": "string"
+            },
+            {
+              "id": "db5700d2-dd69-434a-a510-4082961383e1",
+              "name": "Prompt",
+              "value": "={{ $('Get row(s) in sheet').item.json.Prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "084e0846-a57d-4233-b91c-00da8a5d41d2",
+              "name": "Expected Actions",
+              "value": "={{ JSON.parse($('Get row(s) in sheet').item.json['Expected Actions']) }}",
+              "type": "array"
+            },
+            {
+              "id": "8c13d3ab-c1cb-4b0e-aff6-bc3bb1b81eed",
+              "name": "OPENAI",
+              "value": "={{ $json.EvaluationResults.map(r => `${r.EvalActionName}: ${r.EvalDecision}`).join(', ') }}\n",
+              "type": "string"
+            },
+            {
+              "id": "edd1fa8e-b8e5-4d6c-b38d-40a67e321823",
+              "name": "OPENAI policy",
+              "value": "={{ $('Anthropic AI Agent').item.json.output }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2496,
+        2576
+      ],
+      "id": "a30b596f-d28a-4b9d-88b9-fa9a1db4e55f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "## Why do we need AWS IAM IAM Policy Simulator to classify?\n“We use the AWS IAM Policy Simulator to measure semantic correctness, not syntactic similarity. Even if an LLM-generated policy lists the right actions, those permissions may not be effectively granted due to incorrect resource or condition usage. Therefore, we only consider actions marked as allowed by the simulator when determining whether a policy is equivalent, overpermissive, or underpermissive.”\n",
+        "height": 304,
+        "width": 352
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3296,
+        736
+      ],
+      "typeVersion": 1,
+      "id": "f2c088bd-a9a8-422c-8f64-1f7cc10a5885",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vc5la5rs55.execute-api.us-east-1.amazonaws.com/default/test_lambda",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "policy",
+              "value": "={{ $json.output.policy }}"
+            },
+            {
+              "name": "resourceArns",
+              "value": "={{ $json.output.resourceArns }}"
+            },
+            {
+              "name": "actionNames",
+              "value": "={{ JSON.parse($('Get row(s) in sheet3').item.json['Expected Actions']) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2368,
+        1312
+      ],
+      "id": "e3c0f940-2ec1-47f3-8a34-85a304552f09",
+      "name": "IAM Policy Simulator1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://5kv5wgmga3.execute-api.us-east-1.amazonaws.com/default/classsify_n8n",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "expectedActions",
+              "value": "={{ JSON.parse($('Get row(s) in sheet3').item.json['Expected Actions']) }}"
+            },
+            {
+              "name": "predictedActions",
+              "value": "={{ $json.EvaluationResults.map(r => `${r.EvalActionName}: ${r.EvalDecision}`) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2608,
+        1296
+      ],
+      "id": "ff3c461c-d64c-4ecc-8142-2348b4d087dc",
+      "name": "Classify Results1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg",
+          "mode": "list",
+          "cachedResultName": "INPUT DATA IAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 527641204,
+          "mode": "list",
+          "cachedResultName": "Copy of Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit#gid=527641204"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Prompt",
+              "displayName": "Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expected Actions",
+              "displayName": "Expected Actions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LLM Result",
+              "displayName": "LLM Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3072,
+        1536
+      ],
+      "id": "e752d055-e661-4b98-b95f-1e77e2cbfc41",
+      "name": "Update row in sheet4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jaEC5sQyAFQxY98U",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Prompt }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert in AWS Identity and Access Management (IAM) and must generate valid AWS IAM policies in JSON format that strictly follow least privilege principles.\n\n### General Rules:\n1. The model output must be a JSON object only — no text, no comments, no explanations.\n2. Do exactly what the user prompt asks — nothing more, nothing less.\n3. Always apply AWS least-privilege best practices — include only the minimal actions, resources, and conditions required.\n4. Use **correct ARN resource patterns** (e.g., \"arn:aws:s3:::*/*\" for all S3 objects). Use `\"*\"` only when:\n   - The service does **not** support resource-level permissions, or\n   - The user explicitly specifies `\"*\"` as the resource.\n5. Interpret the user prompt **literally**:\n   - “write access” → only include actions like `s3:PutObject`\n   - “read access” → only include minimal read actions like `s3:GetObject`\n   - Do **not** assume additional permissions unless explicitly stated.\n6. If the user provides `Condition`, `Principal`, or multiple statements, preserve them **exactly** as given — do not alter key names, capitalization, or nesting.\n7. Always include `\"Version\": \"2012-10-17\"` unless the user specifies another.\n8. When `Condition` is specified, preserve all nested operators (e.g., `DateGreaterThan`, `StringEquals`, `IpAddress`, etc.) exactly as written.\n9. Return the JSON object in this structure **exactly** (do not include type metadata or schema text):\n\n\nSTRICTLY FOLLOW THIS OUTPUT FORMAT\n{\n    \"output\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"policy\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"Version\": {\n              \"type\": \"string\",\n              \"description\": \"The policy language version, usually '2012-10-17'.\",\n              \"enum\": [\"2012-10-17\", \"2008-10-17\"]\n            },\n            \"Id\": {\n              \"type\": \"string\",\n              \"description\": \"Optional identifier for the policy.\"\n            },\n            \"Statement\": {\n              \"type\": [\"array\", \"object\"],\n              \"description\": \"One or more statements defining the policy rules.\",\n              \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"Sid\": {\n                    \"type\": \"string\",\n                    \"description\": \"Optional statement identifier.\"\n                  },\n                  \"Effect\": {\n                    \"type\": \"string\",\n                    \"enum\": [\"Allow\", \"Deny\"],\n                    \"description\": \"Allow or Deny effect.\"\n                  },\n                  \"Principal\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"object\" }\n                    ],\n                    \"description\": \"Defines the principal to which this statement applies.\"\n                  },\n                  \"Action\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS actions affected by this statement.\"\n                  },\n                  \"NotAction\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Actions explicitly excluded.\"\n                  },\n                  \"Resource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS resources affected by this statement.\"\n                  },\n                  \"NotResource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Resources explicitly excluded.\"\n                  },\n                  \"Condition\": {\n                    \"type\": \"object\",\n                    \"description\": \"Optional conditions for this statement.\",\n                    \"additionalProperties\": {\n                      \"type\": \"object\",\n                      \"additionalProperties\": {\n                        \"oneOf\": [\n                          { \"type\": \"string\" },\n                          { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                        ]\n                      }\n                    }\n                  }\n                },\n                \"required\": [\"Effect\", \"Action\", \"Resource\"],\n                \"additionalProperties\": false\n              }\n            }\n          },\n          \"required\": [\"Version\", \"Statement\"],\n          \"additionalProperties\": false\n        },\n        \"resourceArns\": {\n          \"type\": \"array\",\n          \"items\": { \"type\": \"string\" },\n          \"description\": \"List of AWS Resource ARNs the policy applies to.\"\n        }\n      },\n      \"required\": [\"policy\", \"resourceArns\"],\n      \"additionalProperties\": false\n    },\n  \"required\": [\"output\"],\n  \"additionalProperties\": false\n}\n\n\n### Service-Specific Rules:\n10. For services that **do not support resource-level permissions** (always require `\"Resource\": \"*\"`) such as:\n    - `account`\n    - `organizations`\n    - `support`\n    - `billing`\n    - `cloudfront-tagging`\n    - `trustedadvisor`\n    - `budgets`\n    - `securityhub`\n    always use `\"Resource\": \"*\"` and express scope or restriction using a `Condition` key (e.g., `\"account:TargetRegion\"`, `\"organizations:AccountId\"`, etc.).\n11. If a user specifies an invalid ARN for such services, automatically correct it to `\"Resource\": \"*\"` and move the restriction into a `Condition` if context implies one.\n12. For resource-based services like S3, DynamoDB, Lambda, SQS, and SNS:\n    - Use explicit ARNs when possible (never `\"*\"` unless absolutely required).\n    - Follow valid ARN patterns per service documentation.\n13. Every `Statement` should represent a single, coherent permission scope (actions + resources + conditions).  \n    If multiple SIDs are present, each represents an independent statement block.\n14. Always maintain valid IAM syntax: `\"Effect\"`, `\"Action\"`, and `\"Resource\"` are mandatory fields."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1888,
+        1312
+      ],
+      "id": "10d90a9e-dafe-42de-a60e-46dfb780ac56",
+      "name": "Google AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Prompt }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert in AWS Identity and Access Management (IAM) and must generate valid AWS IAM policies in JSON format that strictly follow least privilege principles.\n\n### General Rules:\n1. The model output must be a JSON object only — no text, no comments, no explanations.\n2. Do exactly what the user prompt asks — nothing more, nothing less.\n3. Always apply AWS least-privilege best practices — include only the minimal actions, resources, and conditions required.\n4. Use **correct ARN resource patterns** (e.g., \"arn:aws:s3:::*/*\" for all S3 objects). Use `\"*\"` only when:\n   - The service does **not** support resource-level permissions, or\n   - The user explicitly specifies `\"*\"` as the resource.\n5. Interpret the user prompt **literally**:\n   - “write access” → only include actions like `s3:PutObject`\n   - “read access” → only include minimal read actions like `s3:GetObject`\n   - Do **not** assume additional permissions unless explicitly stated.\n6. If the user provides `Condition`, `Principal`, or multiple statements, preserve them **exactly** as given — do not alter key names, capitalization, or nesting.\n7. Always include `\"Version\": \"2012-10-17\"` unless the user specifies another.\n8. When `Condition` is specified, preserve all nested operators (e.g., `DateGreaterThan`, `StringEquals`, `IpAddress`, etc.) exactly as written.\n9. Return the JSON object in this structure **exactly** (do not include type metadata or schema text):\n\n\nSTRICTLY FOLLOW THIS OUTPUT FORMAT\n{\n    \"output\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"policy\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"Version\": {\n              \"type\": \"string\",\n              \"description\": \"The policy language version, usually '2012-10-17'.\",\n              \"enum\": [\"2012-10-17\", \"2008-10-17\"]\n            },\n            \"Id\": {\n              \"type\": \"string\",\n              \"description\": \"Optional identifier for the policy.\"\n            },\n            \"Statement\": {\n              \"type\": [\"array\", \"object\"],\n              \"description\": \"One or more statements defining the policy rules.\",\n              \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"Sid\": {\n                    \"type\": \"string\",\n                    \"description\": \"Optional statement identifier.\"\n                  },\n                  \"Effect\": {\n                    \"type\": \"string\",\n                    \"enum\": [\"Allow\", \"Deny\"],\n                    \"description\": \"Allow or Deny effect.\"\n                  },\n                  \"Principal\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"object\" }\n                    ],\n                    \"description\": \"Defines the principal to which this statement applies.\"\n                  },\n                  \"Action\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS actions affected by this statement.\"\n                  },\n                  \"NotAction\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Actions explicitly excluded.\"\n                  },\n                  \"Resource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS resources affected by this statement.\"\n                  },\n                  \"NotResource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Resources explicitly excluded.\"\n                  },\n                  \"Condition\": {\n                    \"type\": \"object\",\n                    \"description\": \"Optional conditions for this statement.\",\n                    \"additionalProperties\": {\n                      \"type\": \"object\",\n                      \"additionalProperties\": {\n                        \"oneOf\": [\n                          { \"type\": \"string\" },\n                          { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                        ]\n                      }\n                    }\n                  }\n                },\n                \"required\": [\"Effect\", \"Action\", \"Resource\"],\n                \"additionalProperties\": false\n              }\n            }\n          },\n          \"required\": [\"Version\", \"Statement\"],\n          \"additionalProperties\": false\n        },\n        \"resourceArns\": {\n          \"type\": \"array\",\n          \"items\": { \"type\": \"string\" },\n          \"description\": \"List of AWS Resource ARNs the policy applies to.\"\n        }\n      },\n      \"required\": [\"policy\", \"resourceArns\"],\n      \"additionalProperties\": false\n    },\n  \"required\": [\"output\"],\n  \"additionalProperties\": false\n}\n\n\n### Service-Specific Rules:\n10. For services that **do not support resource-level permissions** (always require `\"Resource\": \"*\"`) such as:\n    - `account`\n    - `organizations`\n    - `support`\n    - `billing`\n    - `cloudfront-tagging`\n    - `trustedadvisor`\n    - `budgets`\n    - `securityhub`\n    always use `\"Resource\": \"*\"` and express scope or restriction using a `Condition` key (e.g., `\"account:TargetRegion\"`, `\"organizations:AccountId\"`, etc.).\n11. If a user specifies an invalid ARN for such services, automatically correct it to `\"Resource\": \"*\"` and move the restriction into a `Condition` if context implies one.\n12. For resource-based services like S3, DynamoDB, Lambda, SQS, and SNS:\n    - Use explicit ARNs when possible (never `\"*\"` unless absolutely required).\n    - Follow valid ARN patterns per service documentation.\n13. Every `Statement` should represent a single, coherent permission scope (actions + resources + conditions).  \n    If multiple SIDs are present, each represents an independent statement block.\n14. Always maintain valid IAM syntax: `\"Effect\"`, `\"Action\"`, and `\"Resource\"` are mandatory fields."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1504,
+        2576
+      ],
+      "id": "648672a5-4191-446c-9870-756a8c371737",
+      "name": "Anthropic AI Agent",
+      "retryOnFail": true,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vc5la5rs55.execute-api.us-east-1.amazonaws.com/default/test_lambda",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "policy",
+              "value": "={{ $json.output.policy }}"
+            },
+            {
+              "name": "resourceArns",
+              "value": "={{ $json.output.resourceArns }}"
+            },
+            {
+              "name": "actionNames",
+              "value": "={{ JSON.parse($('Get row(s) in sheet').item.json['Expected Actions']) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1952,
+        2576
+      ],
+      "id": "3bf84106-5ee6-4088-b31c-823b450b37c2",
+      "name": "IAM Policy Simulator2",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://5kv5wgmga3.execute-api.us-east-1.amazonaws.com/default/classsify_n8n",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "expectedActions",
+              "value": "={{ JSON.parse($('Get row(s) in sheet3').item.json['Expected Actions']) }}"
+            },
+            {
+              "name": "predictedActions",
+              "value": "={{ $json.EvaluationResults.map(r => `${r.EvalActionName}: ${r.EvalDecision}`) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        2576
+      ],
+      "id": "3d6c06fc-6f1c-4836-85c9-6b5afa6b254d",
+      "name": "Classify Results2",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6c461047-15c5-492d-8487-e5c1ec2c6957",
+              "name": "row_number",
+              "value": "={{ $('Get row(s) in sheet3').item.json.row_number }}",
+              "type": "string"
+            },
+            {
+              "id": "db5700d2-dd69-434a-a510-4082961383e1",
+              "name": "Prompt",
+              "value": "={{ $('Get row(s) in sheet3').item.json.Prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "084e0846-a57d-4233-b91c-00da8a5d41d2",
+              "name": "Expected Actions",
+              "value": "={{ JSON.parse($('Get row(s) in sheet3').item.json['Expected Actions']) }}",
+              "type": "array"
+            },
+            {
+              "id": "6168dbf9-bb12-45d0-a02c-34b250d77caf",
+              "name": "GEMINI policy",
+              "value": "={{ $('Google AI Agent').item.json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "21c7e34c-bf2b-47f4-8ee1-898756b2e897",
+              "name": "GEMINI Result",
+              "value": "=error uncomparable",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2864,
+        1536
+      ],
+      "id": "1ae8cac7-1876-4ce4-834b-3573c9dbc051",
+      "name": "Error Edit"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 527641204,
+          "mode": "list",
+          "cachedResultName": "Copy of Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit#gid=527641204"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        672
+      ],
+      "id": "37619000-d70f-4af6-a751-61f5921b58e7",
+      "name": "Get row(s) in sheet4",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jaEC5sQyAFQxY98U",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1744,
+        928
+      ],
+      "id": "dfc5e300-e225-4311-b090-f7645b4e4ac5",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "oz6ZH8OCI5G2ljSs",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{  \n  \"output\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"policy\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"Version\": {\n              \"type\": \"string\",\n              \"description\": \"The policy language version, usually '2012-10-17'.\",\n              \"enum\": [\"2012-10-17\", \"2008-10-17\"]\n            },\n            \"Id\": {\n              \"type\": \"string\",\n              \"description\": \"Optional identifier for the policy.\"\n            },\n            \"Statement\": {\n              \"type\": [\"array\", \"object\"],\n              \"description\": \"One or more statements defining the policy rules.\",\n              \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"Sid\": {\n                    \"type\": \"string\",\n                    \"description\": \"Optional statement identifier.\"\n                  },\n                  \"Effect\": {\n                    \"type\": \"string\",\n                    \"enum\": [\"Allow\", \"Deny\"],\n                    \"description\": \"Allow or Deny effect.\"\n                  },\n                  \"Principal\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"object\" }\n                    ],\n                    \"description\": \"Defines the principal to which this statement applies.\"\n                  },\n                  \"Action\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS actions affected by this statement.\"\n                  },\n                  \"NotAction\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Actions explicitly excluded.\"\n                  },\n                  \"Resource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS resources affected by this statement.\"\n                  },\n                  \"NotResource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Resources explicitly excluded.\"\n                  },\n                  \"Condition\": {\n                    \"type\": \"object\",\n                    \"description\": \"Optional conditions for this statement.\",\n                    \"additionalProperties\": {\n                      \"type\": \"object\",\n                      \"additionalProperties\": {\n                        \"oneOf\": [\n                          { \"type\": \"string\" },\n                          { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                        ]\n                      }\n                    }\n                  }\n                },\n                \"required\": [\"Effect\", \"Action\", \"Resource\"],\n                \"additionalProperties\": false\n              }\n            }\n          },\n          \"required\": [\"Version\", \"Statement\"],\n          \"additionalProperties\": false\n        },\n        \"resourceArns\": {\n          \"type\": \"array\",\n          \"items\": { \"type\": \"string\" },\n          \"description\": \"List of AWS Resource ARNs the policy applies to.\"\n        }\n      },\n      \"required\": [\"policy\", \"resourceArns\"],\n      \"additionalProperties\": false\n    },\n  \"required\": [\"output\"],\n  \"additionalProperties\": false\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2080,
+        928
+      ],
+      "id": "e5bf6ee9-f98f-48bc-9e80-fd69e28676ba",
+      "name": "Structured Output Parser4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg",
+          "mode": "list",
+          "cachedResultName": "INPUT DATA IAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 527641204,
+          "mode": "list",
+          "cachedResultName": "Copy of Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit#gid=527641204"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Prompt",
+              "displayName": "Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expected Actions",
+              "displayName": "Expected Actions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LLM Result",
+              "displayName": "LLM Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3088,
+        656
+      ],
+      "id": "751bf304-578e-4fad-b272-34cfef568ec1",
+      "name": "Update row in sheet5",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jaEC5sQyAFQxY98U",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6c461047-15c5-492d-8487-e5c1ec2c6957",
+              "name": "row_number",
+              "value": "={{ $('Get row(s) in sheet4').item.json.row_number }}",
+              "type": "string"
+            },
+            {
+              "id": "db5700d2-dd69-434a-a510-4082961383e1",
+              "name": "Prompt",
+              "value": "={{ $('Get row(s) in sheet4').item.json.Prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "084e0846-a57d-4233-b91c-00da8a5d41d2",
+              "name": "Expected Actions",
+              "value": "={{ JSON.parse($('Get row(s) in sheet4').item.json['Expected Actions']) }}",
+              "type": "array"
+            },
+            {
+              "id": "8c13d3ab-c1cb-4b0e-aff6-bc3bb1b81eed",
+              "name": "OPENAI",
+              "value": "={{ $('IAM Policy Simulator3').item.json.EvaluationResults.map(r => `${r.EvalActionName}: ${r.EvalDecision}`) }}",
+              "type": "array"
+            },
+            {
+              "id": "edd1fa8e-b8e5-4d6c-b38d-40a67e321823",
+              "name": "=OPENAI policy",
+              "value": "={{ $('OpenAI Agent1').item.json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "943c9c6f-e9b9-4992-a8a6-9e88515cc053",
+              "name": "OPENAI Result",
+              "value": "={{ $json.classification }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2800,
+        656
+      ],
+      "id": "fe76906b-e62c-446c-920b-1b0ed53727b7",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vc5la5rs55.execute-api.us-east-1.amazonaws.com/default/test_lambda",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "policy",
+              "value": "={{ $json.output.policy }}"
+            },
+            {
+              "name": "resourceArns",
+              "value": "={{ $json.output.resourceArns }}"
+            },
+            {
+              "name": "actionNames",
+              "value": "={{ JSON.parse($('Get row(s) in sheet4').item.json['Expected Actions']) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        688
+      ],
+      "id": "bf296950-66f2-465e-8448-01643de47f4c",
+      "name": "IAM Policy Simulator3",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://5kv5wgmga3.execute-api.us-east-1.amazonaws.com/default/classsify_n8n",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "expectedActions",
+              "value": "={{ JSON.parse($('Get row(s) in sheet4').item.json['Expected Actions']) }}"
+            },
+            {
+              "name": "predictedActions",
+              "value": "={{ $json.EvaluationResults.map(r => `${r.EvalActionName}: ${r.EvalDecision}`) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2560,
+        672
+      ],
+      "id": "e89eed81-7919-489b-91ae-c16ff16a2163",
+      "name": "Classify Results3",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6c461047-15c5-492d-8487-e5c1ec2c6957",
+              "name": "row_number",
+              "value": "={{ $('Get row(s) in sheet4').item.json.row_number }}",
+              "type": "string"
+            },
+            {
+              "id": "db5700d2-dd69-434a-a510-4082961383e1",
+              "name": "Prompt",
+              "value": "={{ $('Get row(s) in sheet4').item.json.Prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "084e0846-a57d-4233-b91c-00da8a5d41d2",
+              "name": "Expected Actions",
+              "value": "={{ JSON.parse($('Get row(s) in sheet4').item.json['Expected Actions']) }}",
+              "type": "array"
+            },
+            {
+              "id": "edd1fa8e-b8e5-4d6c-b38d-40a67e321823",
+              "name": "=OPENAI policy",
+              "value": "={{ $('OpenAI Agent1').item.json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "943c9c6f-e9b9-4992-a8a6-9e88515cc053",
+              "name": "OPENAI Result",
+              "value": "=error uncomparable",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2800,
+        928
+      ],
+      "id": "d8d0406c-86ad-4e89-b8d3-d62586b198d4",
+      "name": "Error edit1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg",
+          "mode": "list",
+          "cachedResultName": "INPUT DATA IAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 527641204,
+          "mode": "list",
+          "cachedResultName": "Copy of Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14Gy30B52cAMnQiROACOZmdF3c0Z600rJebO3YWBnlTg/edit#gid=527641204"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Prompt",
+              "displayName": "Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expected Actions",
+              "displayName": "Expected Actions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LLM Result",
+              "displayName": "LLM Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3088,
+        928
+      ],
+      "id": "a3e206ef-7ea9-423f-b9c3-91ed05a376cd",
+      "name": "Update row in sheet6",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jaEC5sQyAFQxY98U",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Prompt }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert in AWS Identity and Access Management (IAM) and must generate valid AWS IAM policies in JSON format that strictly follow least privilege principles.\n\n### General Rules:\n1. The model output must be a JSON object only — no text, no comments, no explanations.\n2. Do exactly what the user prompt asks — nothing more, nothing less.\n3. Always apply AWS least-privilege best practices — include only the minimal actions, resources, and conditions required.\n4. Use **correct ARN resource patterns** (e.g., \"arn:aws:s3:::*/*\" for all S3 objects). Use `\"*\"` only when:\n   - The service does **not** support resource-level permissions, or\n   - The user explicitly specifies `\"*\"` as the resource.\n5. Interpret the user prompt **literally**:\n   - “write access” → only include actions like `s3:PutObject`\n   - “read access” → only include minimal read actions like `s3:GetObject`\n   - Do **not** assume additional permissions unless explicitly stated.\n6. If the user provides `Condition`, `Principal`, or multiple statements, preserve them **exactly** as given — do not alter key names, capitalization, or nesting.\n7. Always include `\"Version\": \"2012-10-17\"` unless the user specifies another.\n8. When `Condition` is specified, preserve all nested operators (e.g., `DateGreaterThan`, `StringEquals`, `IpAddress`, etc.) exactly as written.\n9. Return the JSON object in this structure **exactly** (do not include type metadata or schema text):\n\n\nSTRICTLY FOLLOW THIS OUTPUT FORMAT\n{\n    \"output\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"policy\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"Version\": {\n              \"type\": \"string\",\n              \"description\": \"The policy language version, usually '2012-10-17'.\",\n              \"enum\": [\"2012-10-17\", \"2008-10-17\"]\n            },\n            \"Id\": {\n              \"type\": \"string\",\n              \"description\": \"Optional identifier for the policy.\"\n            },\n            \"Statement\": {\n              \"type\": [\"array\", \"object\"],\n              \"description\": \"One or more statements defining the policy rules.\",\n              \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"Sid\": {\n                    \"type\": \"string\",\n                    \"description\": \"Optional statement identifier.\"\n                  },\n                  \"Effect\": {\n                    \"type\": \"string\",\n                    \"enum\": [\"Allow\", \"Deny\"],\n                    \"description\": \"Allow or Deny effect.\"\n                  },\n                  \"Principal\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"object\" }\n                    ],\n                    \"description\": \"Defines the principal to which this statement applies.\"\n                  },\n                  \"Action\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS actions affected by this statement.\"\n                  },\n                  \"NotAction\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Actions explicitly excluded.\"\n                  },\n                  \"Resource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"The AWS resources affected by this statement.\"\n                  },\n                  \"NotResource\": {\n                    \"oneOf\": [\n                      { \"type\": \"string\" },\n                      { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                    ],\n                    \"description\": \"Resources explicitly excluded.\"\n                  },\n                  \"Condition\": {\n                    \"type\": \"object\",\n                    \"description\": \"Optional conditions for this statement.\",\n                    \"additionalProperties\": {\n                      \"type\": \"object\",\n                      \"additionalProperties\": {\n                        \"oneOf\": [\n                          { \"type\": \"string\" },\n                          { \"type\": \"array\", \"items\": { \"type\": \"string\" } }\n                        ]\n                      }\n                    }\n                  }\n                },\n                \"required\": [\"Effect\", \"Action\", \"Resource\"],\n                \"additionalProperties\": false\n              }\n            }\n          },\n          \"required\": [\"Version\", \"Statement\"],\n          \"additionalProperties\": false\n        },\n        \"resourceArns\": {\n          \"type\": \"array\",\n          \"items\": { \"type\": \"string\" },\n          \"description\": \"List of AWS Resource ARNs the policy applies to.\"\n        }\n      },\n      \"required\": [\"policy\", \"resourceArns\"],\n      \"additionalProperties\": false\n    },\n  \"required\": [\"output\"],\n  \"additionalProperties\": false\n}\n\n\n### Service-Specific Rules:\n10. For services that **do not support resource-level permissions** (always require `\"Resource\": \"*\"`) such as:\n    - `account`\n    - `organizations`\n    - `support`\n    - `billing`\n    - `cloudfront-tagging`\n    - `trustedadvisor`\n    - `budgets`\n    - `securityhub`\n    always use `\"Resource\": \"*\"` and express scope or restriction using a `Condition` key (e.g., `\"account:TargetRegion\"`, `\"organizations:AccountId\"`, etc.).\n11. If a user specifies an invalid ARN for such services, automatically correct it to `\"Resource\": \"*\"` and move the restriction into a `Condition` if context implies one.\n12. For resource-based services like S3, DynamoDB, Lambda, SQS, and SNS:\n    - Use explicit ARNs when possible (never `\"*\"` unless absolutely required).\n    - Follow valid ARN patterns per service documentation.\n13. Every `Statement` should represent a single, coherent permission scope (actions + resources + conditions).  \n    If multiple SIDs are present, each represents an independent statement block.\n14. Always maintain valid IAM syntax: `\"Effect\"`, `\"Action\"`, and `\"Resource\"` are mandatory fields."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1856,
+        688
+      ],
+      "id": "41d08463-a8b1-4a2c-9835-8249106ca8b0",
+      "name": "OpenAI Agent1",
+      "retryOnFail": true,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        672
+      ],
+      "id": "fe211315-d6f4-4f90-9920-dcf6bb034b53",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "content": "### Why are we using a loop to implement batch processing\nAWS IAM Policy simulator has an API rate limit where it only allows 10 policies per request so we're processing 5 rows per batch",
+        "height": 176,
+        "width": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1280,
+        464
+      ],
+      "typeVersion": 1,
+      "id": "c6d01e80-e9c1-44d2-ac15-458e2d33a317",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Gemini LLM Workflow",
+        "height": 80,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        1376
+      ],
+      "typeVersion": 1,
+      "id": "4efc1004-296f-4c4b-a74f-ed8d2d5a9906",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## OpenAI LLM Workflow",
+        "height": 80,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        688
+      ],
+      "typeVersion": 1,
+      "id": "de16e3ae-5043-4916-8d41-356a21179948",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### AWS IAM Policy simulator\nWe use an AWS Lambda Function fronted with AWS API Gateway to send requests to AWS IAM Policy simulator and recieve responses",
+        "height": 176,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2256,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "3701ec10-e981-4e9e-9ea9-c70b8b5ee4d7",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "### Classify results\nWe use an AWS Lambda Function which has code logic to classify llm generated policy with ground truth. This lambda function is fronted with AWS API Gateway to recieve requests and send response",
+        "height": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2512,
+        480
+      ],
+      "typeVersion": 1,
+      "id": "86a9c11a-79ce-4db0-9e09-631d94ea91fb",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1296
+      ],
+      "id": "b7a15214-f098-403b-9c2a-5461a2db5e21",
+      "name": "Loop Over Items1"
     }
   ],
   "pinData": {},
@@ -531,73 +1247,12 @@
       "main": [
         [
           {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "Get row(s) in sheet3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get row(s) in sheet2": {
-      "main": [
-        [
-          {
-            "node": "AI Agent2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent2": {
-      "main": [
-        [
-          {
-            "node": "HTTP Request2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model2": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent2",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request2": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Structured Output Parser2": {
-      "ai_outputParser": [
-        [
-          {
-            "node": "AI Agent2",
-            "type": "ai_outputParser",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields1": {
-      "main": [
-        [
-          {
-            "node": "Update row in sheet1",
             "type": "main",
             "index": 0
           }
@@ -608,7 +1263,7 @@
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent3",
+            "node": "Google AI Agent",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -619,7 +1274,7 @@
       "ai_outputParser": [
         [
           {
-            "node": "AI Agent3",
+            "node": "Google AI Agent",
             "type": "ai_outputParser",
             "index": 0
           }
@@ -630,18 +1285,7 @@
       "main": [
         [
           {
-            "node": "AI Agent3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request3": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields2",
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
@@ -659,11 +1303,283 @@
         ]
       ]
     },
-    "AI Agent3": {
+    "Get row(s) in sheet": {
       "main": [
         [
           {
-            "node": "HTTP Request3",
+            "node": "Anthropic AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Anthropic AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IAM Policy Simulator1": {
+      "main": [
+        [
+          {
+            "node": "Classify Results1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Edit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Results1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Edit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google AI Agent": {
+      "main": [
+        [
+          {
+            "node": "IAM Policy Simulator1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic AI Agent": {
+      "main": [
+        [
+          {
+            "node": "IAM Policy Simulator2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IAM Policy Simulator2": {
+      "main": [
+        [
+          {
+            "node": "Classify Results2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Edit": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "OpenAI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser4": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "OpenAI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IAM Policy Simulator3": {
+      "main": [
+        [
+          {
+            "node": "Classify Results3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error edit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Results3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error edit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error edit1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Agent1": {
+      "main": [
+        [
+          {
+            "node": "IAM Policy Simulator3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "OpenAI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Google AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
             "type": "main",
             "index": 0
           }
@@ -675,7 +1591,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "17abcef8-91d3-426f-867e-d23ce450e0c9",
+  "versionId": "9c761174-ea5e-4781-9aa5-716a182d01fe",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b6877e2c1f3ea2edb7f4f51cfa15257f7b04840422254d09c789d346aa79abc2"
